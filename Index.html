@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Mes Applications</title>
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --cream:   #FBF7F0;
+  --ink:     #2B2A28;
+  --ink-soft:#6B6560;
+  --ink3:    #A19A90;
+  --line:    #E4DACB;
+  --white:   #FFFFFF;
+
+  --sage:    #5F8B7A;
+  --apricot: #E2984B;
+  --blue:    #6B8CAE;
+  --terra:   #C77558;
+  --gray:    #B7AFA2;
+
+  --radius: 18px;
+  --radius-sm: 12px;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+}
+html, body { background:var(--cream); color:var(--ink); font-family:var(--font); min-height:100vh; -webkit-font-smoothing:antialiased; }
+
+.topbar {
+  position:fixed; top:0; left:0; right:0; height:64px;
+  background:var(--sage); color:var(--white);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 18px; z-index:1000;
+}
+.topbar-title { font-size:1.1rem; font-weight:800; letter-spacing:-0.01em; }
+.hamburger {
+  width:38px; height:38px; display:flex; flex-direction:column;
+  justify-content:center; align-items:center; gap:5px; cursor:pointer;
+  border:none; background:none;
+}
+.hamburger span { display:block; width:20px; height:2px; background:var(--white); border-radius:2px; transition:all .3s; }
+.hamburger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity:0; }
+.hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+
+.nav-overlay {
+  position:fixed; inset:0; background:rgba(43,42,40,0); z-index:900;
+  pointer-events:none; transition:background .25s;
+}
+.nav-overlay.open { background:rgba(43,42,40,0.35); pointer-events:all; }
+.nav-drawer {
+  position:fixed; top:0; right:-290px; width:270px; height:100vh;
+  background:var(--white); z-index:950; overflow-y:auto;
+  transition:right .25s cubic-bezier(.4,0,.2,1);
+  box-shadow:-6px 0 24px rgba(43,42,40,0.12);
+}
+.nav-drawer.open { right:0; }
+.nav-header { padding:70px 22px 20px; border-bottom:1px solid var(--line); margin-bottom:6px; }
+.nav-header-label { font-size:10px; color:var(--ink3); letter-spacing:2px; text-transform:uppercase; margin-bottom:4px; }
+.nav-header-name { font-size:1.2rem; font-weight:800; color:var(--sage); }
+.nav-item {
+  display:flex; align-items:center; gap:12px; padding:13px 22px;
+  cursor:pointer; color:var(--ink); border-left:3px solid transparent;
+  font-weight:600; font-size:0.95rem;
+}
+.nav-item:hover { background:var(--cream); }
+.nav-item.disabled { color:var(--ink3); cursor:default; }
+.nav-item.disabled:hover { background:none; }
+.nav-item-icon { font-size:19px; width:26px; text-align:center; }
+.nav-item-sub { font-size:0.72rem; color:var(--ink3); font-weight:500; margin-left:auto; }
+
+.main { padding:84px 18px 40px; max-width:640px; margin:0 auto; }
+.page-label { font-size:11px; color:var(--ink3); letter-spacing:2px; text-transform:uppercase; margin-bottom:4px; }
+.page-title { font-size:1.6rem; font-weight:800; letter-spacing:-0.01em; margin-bottom:22px; }
+
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+.card {
+  border-radius:var(--radius); padding:20px 16px; cursor:pointer;
+  border:1px solid var(--line); background:var(--white);
+  transition:transform .15s, box-shadow .15s;
+  display:flex; flex-direction:column; gap:2px;
+  text-decoration:none; color:inherit;
+}
+.card:active { transform:scale(0.98); }
+.card:hover { box-shadow:0 6px 18px rgba(43,42,40,0.08); }
+.card-full { grid-column:1 / -1; flex-direction:row; align-items:center; gap:14px; }
+.card-icon { font-size:30px; }
+.card-full .card-icon { font-size:32px; }
+.card-title { font-weight:800; font-size:0.98rem; }
+.card-sub { font-size:0.78rem; color:var(--ink-soft); line-height:1.4; }
+
+.card-disabled { cursor:default; opacity:0.55; background:var(--cream); }
+.card-disabled:hover { box-shadow:none; }
+.card-disabled:active { transform:none; }
+
+.card-c1 { border-top:3px solid var(--sage); }
+.card-c1 .card-title { color:var(--sage); }
+.card-c2 { border-top:3px solid var(--terra); }
+.card-c2 .card-title { color:var(--terra); }
+.card-c3 { border-top:3px solid var(--sage); }
+.card-c3 .card-title { color:var(--sage); }
+.card-c4 { border-top:3px solid var(--blue); }
+.card-c4 .card-title { color:var(--blue); }
+.card-c5 { border-top:3px solid var(--apricot); }
+.card-c5 .card-title { color:var(--apricot); }
+.card-c6 { border-top:3px solid var(--gray); }
+.card-c6 .card-title { color:var(--gray); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-title">🏠 Mes Applications</div>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
+</div>
+
+<div class="nav-overlay" id="navOverlay" onclick="closeMenu()"></div>
+
+<div class="nav-drawer" id="navDrawer">
+  <div class="nav-header">
+    <div class="nav-header-label">Navigation</div>
+    <div class="nav-header-name">Mes Applications</div>
+  </div>
+
+  <div class="nav-item disabled">
+    <span class="nav-item-icon">💰</span> Comptes
+    <span class="nav-item-sub">bientôt</span>
+  </div>
+  <div class="nav-item" onclick="ouvrir('https://seguinicolas.github.io/Heure-Severine/')">
+    <span class="nav-item-icon">⏱️</span> Heure Séverine
+  </div>
+  <div class="nav-item" onclick="ouvrir('https://seguinicolas.github.io/Outils-pompiers/')">
+    <span class="nav-item-icon">🚒</span> Pompiers
+  </div>
+  <div class="nav-item" onclick="ouvrir('https://seguinicolas.github.io/Gamm-Vert/')">
+    <span class="nav-item-icon">🌱</span> Gamm Vert
+  </div>
+  <div class="nav-item" onclick="ouvrir('https://seguinicolas.github.io/Suivi-sport/')">
+    <span class="nav-item-icon">🏃</span> Suivi sport
+  </div>
+  <div class="nav-item" onclick="ouvrir('https://seguinicolas.github.io/Au-BouBou-de-LuLu/')">
+    <span class="nav-item-icon">🐾</span> Au BouBou de Lulu
+  </div>
+</div>
+
+<div class="main">
+  <div class="page-label">Tableau de bord</div>
+  <div class="page-title">Bienvenue 👋</div>
+
+  <div class="grid">
+    <div class="card card-disabled card-c6">
+      <span class="card-icon">💰</span>
+      <span class="card-title">Comptes</span>
+      <span class="card-sub">Bientôt disponible</span>
+    </div>
+    <a class="card card-c1" href="https://seguinicolas.github.io/Heure-Severine/">
+      <span class="card-icon">⏱️</span>
+      <span class="card-title">Heure Séverine</span>
+      <span class="card-sub">Suivi des heures de travail</span>
+    </a>
+  </div>
+
+  <div class="grid">
+    <a class="card card-full card-c2" href="https://seguinicolas.github.io/Outils-pompiers/">
+      <span class="card-icon">🚒</span>
+      <div>
+        <div class="card-title">Pompiers</div>
+        <div class="card-sub">Outils d'intervention</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="grid">
+    <a class="card card-c3" href="https://seguinicolas.github.io/Gamm-Vert/">
+      <span class="card-icon">🌱</span>
+      <span class="card-title">Gamm Vert</span>
+      <span class="card-sub">Gestion magasin</span>
+    </a>
+    <a class="card card-c4" href="https://seguinicolas.github.io/Suivi-sport/">
+      <span class="card-icon">🏃</span>
+      <span class="card-title">Suivi sport</span>
+      <span class="card-sub">Activités Garmin</span>
+    </a>
+  </div>
+
+  <div class="grid">
+    <a class="card card-full card-c5" href="https://seguinicolas.github.io/Au-BouBou-de-LuLu/">
+      <span class="card-icon">🐾</span>
+      <div>
+        <div class="card-title">Au BouBou de Lulu</div>
+        <div class="card-sub">Gestion du salon de toilettage</div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<script>
+let menuOuvert = false;
+
+function toggleMenu() {
+  menuOuvert = !menuOuvert;
+  document.getElementById('hamburger').classList.toggle('open', menuOuvert);
+  document.getElementById('navDrawer').classList.toggle('open', menuOuvert);
+  document.getElementById('navOverlay').classList.toggle('open', menuOuvert);
+}
+
+function closeMenu() {
+  menuOuvert = false;
+  document.getElementById('hamburger').classList.remove('open');
+  document.getElementById('navDrawer').classList.remove('open');
+  document.getElementById('navOverlay').classList.remove('open');
+}
+
+function ouvrir(url) {
+  window.location.href = url;
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+</script>
+</body>
+</html>
